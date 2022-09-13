@@ -1,18 +1,24 @@
-const input = document.querySelector("input");
+const select = document.querySelector("select");
 const button = document.querySelector("button");
 const perroContainer = document.querySelector(".perro-container");
 
 button.addEventListener("click", (e) => {
     e.preventDefault();
-    traerRaza(input.value);
+    traerInfo(`https://dog.ceo/api/breed/${select.value}/images/random`,crearRaza);
 })
 
-function traerRaza(raza) {
-    fetch(`https://dog.ceo/api/breed/${raza}/images/random`)
+window.addEventListener("load", (e) => {
+    e.preventDefault();
+    traerInfo(`https://dog.ceo/api/breeds/list/all`,cargarSelect);
+})
+
+function traerInfo(url, callback) {
+    fetch(url)
         .then(res => res.json())
         .then(data => {
-            crearRaza(data);
-        });
+            callback(data);
+        })
+        .catch( (e) => { console.log(e)});
 }
 
 function crearRaza(raza) {
@@ -28,3 +34,14 @@ function crearRaza(raza) {
 
     perroContainer.appendChild(div);
 }
+
+function cargarSelect(razasObj){
+    let razas = Object.keys(razasObj.message);
+    razas.forEach(raza => { 
+        let opt = document.createElement('option');
+        opt.value = raza;
+        opt.innerHTML = raza;
+        select.appendChild(opt);
+    })
+}
+
